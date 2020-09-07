@@ -20,9 +20,9 @@ router.get('/allposts', (req, res) => {
 
 
 router.post('/createpost', requireLogin, (req, res) => {
-    const{title, body} = req.body;
+    const{title, body, pic} = req.body;
 
-    if(!title || !body) {
+    if(!title || !body || !pic) {
         return res.status(422).json({error: "Please add all the fields."})
     }
 
@@ -31,6 +31,7 @@ router.post('/createpost', requireLogin, (req, res) => {
     const post = new Post ({
         title, // written in leu of title: title
         body, // written in leu of body: body
+        pic,  // written in leu of pic: pic
         postedBy: req.user
     })
 

@@ -31,7 +31,7 @@ router.post('/createpost', requireLogin, (req, res) => {
     const post = new Post ({
         title, // written in leu of title: title
         body, // written in leu of body: body
-        pic,  // written in leu of pic: pic
+        photo: pic,  // written in leu of pic: pic
         postedBy: req.user
     })
 

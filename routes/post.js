@@ -106,7 +106,7 @@ router.put('/comment', requireLogin, (req, res) => {
             return res.status(422).json({error:err})
         } else {
             res.json(result)
-            console.log(result);
+            
             
         }
     })
@@ -131,31 +131,74 @@ router.delete('/deletePost/:postId', requireLogin, (req, res) => {
     })
 })
 
-router.delete("/deletecomment/:id/:comment_id", requireLogin, (req, res) => {
-    const comment = { _id: req.params.comment_id };
-    Post.findByIdAndUpdate(
-      req.params.id,
-      {
-        $pull: { comments: comment },
-      },
-      {
-        new: true, 
-      }
-    )
-      .populate("comments.postedBy", "_id name")
-      .populate("postedBy", "_id name ")
-      .exec((err, postComment) => {
-        if (err || !postComment) {
-          return res.status(422).json({ error: err });
-        } else {
-         
-          const result = postComment;
-          res.json(result);
+
+// router.delete('/deleteComment/:postId/:commentId', requireLogin,  (req, res) => {
+//    Post.findById(req.params.postId)
+//    .populate("comments.postedBy", "_id name")
+//    .populate("postedBy", "_id name ")
+//    .exec((err, post) => {
+//        if(err) {
+//         return res.status(422).json({ error: err });
+//        } else {
+           
+           
+//            post.comments.forEach(item => { 
+//             console.log(req.params.commentId.toString());
+//             if(item._id.toString()===req.params.commentId.toString()) {
+
+//                 if((item.postedBy._id.toString() || post.postedBy._id)
+//                 === req.user._id.toString()) {
+                    
+                
+//                     console.log("delete executed")
+//                        post.comments.splice(post.comments.indexOf(item),1)
+//             }
+              
+                
+//     } 
+               
+//            })
+//            console.log(post.comments)
+//            res.send(post);
+//        }
+//    })
+           
+        
+// })
+
+
+router.delete('/deleteComment/:postId/:commentId',requireLogin, (req, res) => {
+
+    Post.findById(req.params.postId, (err, post) => {
+        if(err || !post) {
+            return res.status(422).json({ error: err });
         }
-      });
-  });
+        if(post) {
+            post.comments.forEach(item => { 
+                            // console.log(req.params.commentId.toString());
+                            // if(item._id.toString()===req.params.commentId.toString()) {
+                
+                                if((item.postedBy._id.toString() || post.postedBy._id.toString())
+                                === req.user._id.toString()) {
+                                    
+                                
+                                   
+                                       post.comments.splice(post.comments.indexOf(item),1)
+                                       post.save();
+                            }
+
+                            
+
+        
+                        }) 
+                    }
+                    console.log("post: ",post)
+                    res.json(JSON.stringify(post))
+                })
+});
 
 
-
-
+    
+    
+    
 module.exports = router;

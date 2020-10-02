@@ -175,23 +175,25 @@ router.delete('/deleteComment/:postId/:commentId',requireLogin, (req, res) => {
         }
         if(post) {
             post.comments.forEach(item => { 
-                            // console.log(req.params.commentId.toString());
-                            // if(item._id.toString()===req.params.commentId.toString()) {
+                            
                 
-                                if((item.postedBy._id.toString() || post.postedBy._id.toString())
-                                === req.user._id.toString()) {
+                                if(((item.postedBy.toString() === req.user._id.toString()) || (post.postedBy.toString()
+                                === req.user._id.toString())) && item._id.toString()===req.params.commentId.toString()) {
                                     
                                 
                                    
                                        post.comments.splice(post.comments.indexOf(item),1)
                                        post.save();
+                                      
                             }
 
                             
 
         
                         }) 
+                        
                     }
+                    
                     console.log("post: ",post)
                     res.json(JSON.stringify(post))
                 })

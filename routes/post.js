@@ -132,58 +132,40 @@ router.delete('/deletePost/:postId', requireLogin, (req, res) => {
 })
 
 
-// router.delete('/deleteComment/:postId/:commentId', requireLogin,  (req, res) => {
-//    Post.findById(req.params.postId)
-//    .populate("comments.postedBy", "_id name")
-//    .populate("postedBy", "_id name ")
-//    .exec((err, post) => {
-//        if(err) {
-//         return res.status(422).json({ error: err });
-//        } else {
-           
-           
-//            post.comments.forEach(item => { 
-//             console.log(req.params.commentId.toString());
-//             if(item._id.toString()===req.params.commentId.toString()) {
 
-//                 if((item.postedBy._id.toString() || post.postedBy._id)
-//                 === req.user._id.toString()) {
-                    
-                
-//                     console.log("delete executed")
-//                        post.comments.splice(post.comments.indexOf(item),1)
-//             }
-              
-                
-//     } 
-               
-//            })
-//            console.log(post.comments)
-//            res.send(post);
-//        }
-//    })
-           
-        
-// })
+
 
 
 router.delete('/deleteComment/:postId/:commentId',requireLogin, (req, res) => {
 
-    Post.findById(req.params.postId, (err, post) => {
+   
+    Post.findOne({_id: req.params.postId})
+    .populate("postedBy", "_id name ")
+    .populate("comments.postedBy", "_id name")
+    .exec((err, post) => {
+        
         if(err || !post) {
             return res.status(422).json({ error: err });
         }
         if(post) {
+
+            
             post.comments.forEach(item => { 
-                            
+                            console.log("item._id.toString()=", item._id.toString())
                 
-                                if(((item.postedBy.toString() === req.user._id.toString()) || (post.postedBy.toString()
-                                === req.user._id.toString())) && item._id.toString()===req.params.commentId.toString()) {
+                                if(((item.postedBy._id.toString() === req.user._id.toString()) || (post.postedBy._id.toString()
+                                === req.user._id.toString())) && (item._id.toString()===req.params.commentId.toString())) {
                                     
                                 
                                    
                                        post.comments.splice(post.comments.indexOf(item),1)
-                                       post.save();
+                                       post.save()
+                                       .then(result => {
+                                        console.log("result: ",result)
+                                        res.json((result))
+                                    }).catch(err => {
+                                        console.log(err)
+                                    })
                                       
                             }
 
@@ -194,10 +176,10 @@ router.delete('/deleteComment/:postId/:commentId',requireLogin, (req, res) => {
                         
                     }
                     
-                    console.log("post: ",post)
-                    res.json(JSON.stringify(post))
+                   
                 })
 });
+
 
 
     

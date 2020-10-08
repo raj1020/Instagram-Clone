@@ -76,8 +76,8 @@ router.post('/signin', (req, res) => {
             if(doMatch) {
                 //return res.json({message: "Successfully signed in"});
                 const token = jwt.sign({_id: savedUser._id}, JWT_SECRET);
-               const {_id, name, email} = savedUser;
-                res.json({token, user: {_id, name, email}})
+               const {_id, name, email, followers, following} = savedUser;
+                res.json({token, user: {_id, name, email, followers, following}})
                 //in the line above the key and the value ({token: token}) are both "token", hence it can just be written as a single {token}.
 
             } else {

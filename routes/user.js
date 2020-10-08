@@ -44,6 +44,7 @@ router.put('/follow', requireLogin, (req, res) => {
         return res.status(422).json({error: err})
     })
 })
+})
 router.put('/unfollow', requireLogin, (req, res) => {
     User.findByIdAndUpdate(req.body.unfollowId, {
         $pull: {followers: req.user._id}
@@ -64,6 +65,7 @@ router.put('/unfollow', requireLogin, (req, res) => {
         return res.status(422).json({error: err})
     })
 })
+})
 
 
 module.exports = router
@@ -73,4 +75,3 @@ module.exports = router
 
 
 
-module.exports = router;

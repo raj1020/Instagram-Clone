@@ -6,6 +6,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {JWT_SECRET} = require('../keys');
 const requireLogin = require('../middleware/requireLogin');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+const {SENDGRID_API} = require('../keys');
+
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: SENDGRID_API
+    }
+}))
 
 router.get('/', (req, res) => {
     res.send("Hello Bajrangi bhai Jaan")
@@ -40,6 +50,15 @@ router.post('/signup',(req, res) => {
                     })
         
                     user.save()
+                    .then(user => {
+                        transporter.sendMail({
+                            to: user.email,
+                            from: "no-reply@instaclone.com",
+                            subject: "signup success",
+                            html: "<h1>Welcome to InstaClone</h1>"
+
+                        })
+                    })
                     .then(user => {
                         res.json({message: "saved successfully"})
                     })

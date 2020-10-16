@@ -53,7 +53,7 @@ router.post('/signup',(req, res) => {
                     .then(user => {
                         transporter.sendMail({
                             to: user.email,
-                            from: "no-reply@instaclone.com",
+                            from: "pradthecoder@gmail.com",
                             subject: "signup success",
                             html: "<h1>Welcome to InstaClone</h1>"
 

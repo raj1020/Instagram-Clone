@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
+    resetToken: String,
+    expire: Date,
     pic: {
         type: String,
         default: "https://res.cloudinary.com/pradthecoder/image/upload/v1602641314/no-image-icon-23505_q9svsu.png"
@@ -21,5 +23,9 @@ const userSchema = new mongoose.Schema({
     following: [{type: ObjectId, ref: "User"}]
 
 });
+
+
+
+
 
 mongoose.model("User", userSchema);

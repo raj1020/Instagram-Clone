@@ -9,7 +9,7 @@ const {JWT_SECRET} = require('../keys');
 const requireLogin = require('../middleware/requireLogin');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
-const {SENDGRID_API} = require('../keys');
+const {SENDGRID_API, EMAIL} = require('../keys');
 
 
 const transporter = nodemailer.createTransport(sendgridTransport({
@@ -133,12 +133,34 @@ router.post('/reset-password', (req, res) => {
                     subject: "password reset",
                     html: `
                     <p>You requested for a password reset.</p>
-                    <h5>Please click on <a>this link</a> to reset the password.</h5>
+                <h5>Please click on <a href="${EMAIL}/reset/${token}">this link</a> to reset the password.</h5>
                     `
                 })
                 res.json({message: "Please check your email after few minutes."})
             })
         })
+    })
+})
+
+
+router.post('/new-password', (req,res) => {
+    const newPassword = req.body.password;
+    const sentToken = req.body.token;
+    User.findOne({resetToken: sentToken, expireToken: {$gt: Date.now()} })
+    .then(user => {
+        if(!user) {
+            return res.status(422).json({error: "Your link has expired. Please try again."})
+        }
+        bcrypt.hash(newpassword, 12).then(hashedpassword => {
+            user.password = hashedpassword
+            user.resetToken = undefined;
+            user.expireToken = undefined;
+            user.save().then((saveduser) => {
+                res.json({message: "password updated successfully"})
+            })
+        })
+    }).catch(err => {
+        console.log(err);
     })
 })
 
